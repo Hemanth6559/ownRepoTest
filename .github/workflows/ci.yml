@@ -3,10 +3,10 @@ name: Playwright CI
 on:
   push:
     branches:
-      - capstone/299167-hemanth
+      - main
   pull_request:
     branches:
-      - capstone/299167-hemanth
+      - main
 
 jobs:
   playwright:
@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Playwright Tests
         env:
-          BASE_URL: ${{ secrets.HEMANTH_BASE_URL }}
+          BASE_URL: ${{ secrets.UI_BASE_URL }}
         run: npx playwright test
 
       - name: Upload Playwright Report
