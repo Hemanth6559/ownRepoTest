@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   playwright:
     name: Ui_Final
@@ -57,6 +60,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -69,6 +74,30 @@ jobs:
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
         run: mvn -B test
+
+      - name: Checkout hemu-pages branch
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          ref: hemu-pages
+          path: hemu-pages
+
+      - name: Generate Allure Report
+        if: always()
+        uses: simple-elf/allure-report-action@master
+        with:
+          allure_results: API_Final/target/allure-results
+          allure_report: allure-report
+          gh_pages: hemu-pages
+          allure_history: allure-history
+
+      - name: Deploy Allure Report to hemu-pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: hemu-pages
+          publish_dir: allure-history
 
       - name: Upload Maven Test Reports
         if: always()
